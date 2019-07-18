@@ -47,6 +47,10 @@ func New() RandID {
 	return RandID(id[:])
 }
 
+func (s RandID) String() string {
+	return string(s)
+}
+
 func inLastRandID(r [12]int) [12]int {
 	for i := 0; i < 12; i++ {
 		r[i]++
