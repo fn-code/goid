@@ -10,32 +10,21 @@ const (
 	charID = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 )
 
-// RandID is convert byte to string
-type RandID string
+// GID is convert byte to string
+type GID string
 
 var lastTime int64
-var lastID [12]int
 
-// New generate 20 random id
-func New() RandID {
-	var randNumber *rand.Rand
-	var id [20]byte
-
-	randNumber = rand.New(rand.NewSource(time.Now().UnixNano()))
+// New is used for generate 20 random id base on base64 web save chars
+func New() GID {
+	id := [20]byte{}
 	timeMs := time.Now().UTC().UnixNano() / 1e6
-	if timeMs == lastTime {
-		// incremen last rand id
-		lastID = inLastRandID(lastID)
-	} else {
-		for i := 0; i < len(lastID); i++ {
-			lastID[i] = randNumber.Intn(64)
-		}
-	}
+	lastID := generateLastID(timeMs, lastTime)
 
 	lastTime = timeMs
 	// generate last 12 byte of id
 	for i := 0; i < 12; i++ {
-		id[19-i] = charID[lastID[i]]
+		id[(len(id)-1)-i] = charID[lastID[i]]
 	}
 
 	// Genererate first 8 byte of id
@@ -44,11 +33,27 @@ func New() RandID {
 		id[i] = charID[n]
 		timeMs = timeMs / 64
 	}
-	return RandID(id[:])
+	return GID(id[:])
 }
 
-func (s RandID) String() string {
+func (s GID) String() string {
 	return string(s)
+}
+
+var lastIDS [12]int
+
+func generateLastID(timeMs, lastTime int64) [12]int {
+	var randNumber *rand.Rand
+	randNumber = rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
+	if timeMs == lastTime {
+		// incremen last rand id
+		lastIDS = inLastRandID(lastIDS)
+	} else {
+		for i := 0; i < len(lastIDS); i++ {
+			lastIDS[i] = randNumber.Intn(64)
+		}
+	}
+	return lastIDS
 }
 
 func inLastRandID(r [12]int) [12]int {

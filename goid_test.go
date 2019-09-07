@@ -4,12 +4,12 @@ import (
 	"testing"
 )
 
-var lastId RandID
+var lastId GID
 
 func TestNew(t *testing.T) {
 	for i := 0; i < 100000; i++ {
 		new := New()
-		if new == lastId {
+		if new.String() == lastId.String() {
 			t.Errorf("error generate unique new: %v - last: %v", new, lastId)
 		}
 		lastId = new

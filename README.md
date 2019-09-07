@@ -1,2 +1,2 @@
 # goid
-goid is generate random id like firebase push key
+goid is generate 20 byte random id
